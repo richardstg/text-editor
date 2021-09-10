@@ -1,37 +1,22 @@
-import React, { Component, useState } from 'react';
-import { CKEditor } from '@ckeditor/ckeditor5-react';
-import ClassicEditor from '@ckeditor/ckeditor5-build-classic';
+import React from "react";
+import { BrowserRouter as Router, Route, Switch } from "react-router-dom";
 
-import Toolbar from "./toolbar/Toolbar";
+import Toolbar from "./components/toolbar/toolbar";
+import Home from "./pages/home";
+import Update from "./pages/update";
 
 const App = () => {
-    const [text, setText] = useState("");
-
-    return (
-        <div className="App p-5">
-            <Toolbar text={text} />
-            <CKEditor
-                editor={ ClassicEditor }
-                data="<p></p>"
-                onReady={ editor => {
-                    // You can store the "editor" and use when it is needed.
-                    const data = editor.getData();
-                    setText(data);
-                } }
-                onChange={ ( event, editor ) => {
-                    const data = editor.getData();
-                    setText(data);
-                    // console.log( { event, editor, data } );
-                } }
-                onBlur={ ( event, editor ) => {
-                    // console.log( 'Blur.', editor );
-                } }
-                onFocus={ ( event, editor ) => {
-                    // console.log( 'Focus.', editor );
-                } }
-            />
-        </div>
-    );
-}
+  return (
+    <div className="App p-5">
+      <Router>
+        <Toolbar />
+        <Switch>
+          <Route path="/" component={Home} exact />
+          <Route path="/:id" component={Update} />
+        </Switch>
+      </Router>
+    </div>
+  );
+};
 
 export default App;
