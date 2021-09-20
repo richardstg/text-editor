@@ -4,11 +4,11 @@ import TextList from "../components/textlist/textlist";
 
 const Home = (props) => {
   const [texts, setTexts] = useState(null);
-
+  // console.log(process.env.REACT_APP_BACKEND_URL);
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const response = await fetch("http://localhost:1337");
+        const response = await fetch(`${process.env.REACT_APP_BACKEND_URL}`);
         const data = await response.json();
         setTexts(data);
       } catch (error) {

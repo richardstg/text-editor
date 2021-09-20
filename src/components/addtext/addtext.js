@@ -12,7 +12,7 @@ const AddText = (props) => {
     event.preventDefault();
 
     try {
-      const response = await fetch("http://localhost:1337/", {
+      const response = await fetch(`${process.env.REACT_APP_BACKEND_URL}`, {
         method: "POST",
         headers: {
           Accept: "application/json",

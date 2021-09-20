@@ -13,14 +13,17 @@ const Update = (props) => {
     setUpdated(false);
 
     try {
-      const response = await fetch(`http://localhost:1337/${id}`, {
-        method: "PUT",
-        headers: {
-          Accept: "application/json",
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({ name, content }),
-      });
+      const response = await fetch(
+        `${process.env.REACT_APP_BACKEND_URL}/${id}`,
+        {
+          method: "PUT",
+          headers: {
+            Accept: "application/json",
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({ name, content }),
+        }
+      );
       await response.json();
 
       setUpdated(true);
@@ -33,7 +36,7 @@ const Update = (props) => {
     const fetchData = async () => {
       try {
         const response = await fetch(
-          `http://localhost:1337/${props.match.params.id}`
+          `${process.env.REACT_APP_BACKEND_URL}/${props.match.params.id}`
         );
         const data = await response.json();
         const { id, name, content } = data;
