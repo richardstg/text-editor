@@ -1,10 +1,10 @@
-language: node_js
+language: javascript
 
-node_js:
-  - "node"
-  - "12"
-  - "11"
-  - "10"
+# node_js:
+#   - "node"
+#   - "12"
+#   - "11"
+#   - "10"
 
 # sudo: false
 
