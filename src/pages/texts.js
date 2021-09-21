@@ -21,9 +21,8 @@ const Home = () => {
   return (
     <>
       <h3 className="mt-3" data-testid="home">
-        Home
+        Texts
       </h3>
-      <AddText setTexts={setTexts} />
       {texts && texts.length > 0 && <TextList texts={texts} />}
     </>
   );

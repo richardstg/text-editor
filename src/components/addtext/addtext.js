@@ -41,18 +41,21 @@ const AddText = (props) => {
         onChange={(event) => setName(event.target.value)}
         placeholder="Enter name of the text..."
         value={name}
-        class="mt-3 mb-3 w-100 p-2"
+        className="mt-3 mb-3 w-100 p-2"
       />
       <CKEditor
         editor={ClassicEditor}
         data={content}
-        onReady={(editor) => {}}
+        onReady={(editor) => {
+          // You can store the "editor" and use when it is needed.
+          // console.log("Editor is ready to use!");
+        }}
         onChange={(event, editor) => {
           setContent(editor.getData());
         }}
       />
       <button
-        class="btn btn-success mt-3 mb-3"
+        className="btn btn-success mt-3 mb-3"
         type="submit"
         onClick={saveHandler}
       >

@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from "react";
+import { Link } from "react-router-dom";
 import { CKEditor } from "@ckeditor/ckeditor5-react";
 import ClassicEditor from "@ckeditor/ckeditor5-build-classic";
 
@@ -11,6 +12,7 @@ const Update = (props) => {
   const saveHandler = async (event) => {
     event.preventDefault();
     setUpdated(false);
+    // console.log("Button clicked");
 
     try {
       const response = await fetch(
@@ -53,27 +55,39 @@ const Update = (props) => {
 
   return (
     <>
+      <h3 className="mt-3">{name}</h3>
       <input
         onChange={(event) => setName(event.target.value)}
         value={name}
-        class="mt-3 mb-3 w-100 p-2"
+        className="mt-3 mb-3 w-100 p-2"
       />
-      <CKEditor
-        editor={ClassicEditor}
-        data={content}
-        onReady={(editor) => {}}
-        onChange={(event, editor) => {
-          setContent(editor.getData());
-        }}
-      />
+      {content && (
+        <CKEditor
+          editor={ClassicEditor}
+          data={content}
+          onReady={(editor) => {}}
+          onChange={(event, editor) => {
+            setContent(editor.getData());
+          }}
+        />
+      )}
       <button
-        class="btn btn-success mt-3 mb-3"
+        className="btn btn-success mt-3 mb-3"
         type="submit"
         onClick={saveHandler}
+        name="Update Text"
+        data-testid="update-button"
       >
         Update Text
       </button>
-      {updated && <p>Text updated succesfully!</p>}
+      {updated && (
+        <div>
+          <p data-testid="feedback">Text updated successfully!</p>
+          <Link to="/">
+            <span data-testid="back">Back</span>
+          </Link>
+        </div>
+      )}
     </>
   );
 };
