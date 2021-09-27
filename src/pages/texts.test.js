@@ -15,7 +15,17 @@ it("tests that the page shows the texts from the database", async () => {
   // Test first render and componentDidMount
   render(
     <Router history={history}>
-      <Route path={"/texts"} component={Texts} />
+      {/* <Route path={"/texts"} component={Texts} /> */}
+      <Route
+        path="/texts"
+        render={(props) => (
+          <Texts
+            texts={[
+              { id: "12345", name: "First text", content: "Some content..." },
+            ]}
+          />
+        )}
+      />
     </Router>
   );
 

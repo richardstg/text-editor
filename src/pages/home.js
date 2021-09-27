@@ -1,22 +1,9 @@
-import React, { useState, useEffect } from "react";
+import React, { useContext } from "react";
 import AddText from "../components/addtext/addtext";
 import TextList from "../components/textlist/textlist";
 
-const Home = () => {
-  const [texts, setTexts] = useState(null);
-
-  useEffect(() => {
-    const fetchData = async () => {
-      try {
-        const response = await fetch(`${process.env.REACT_APP_BACKEND_URL}`);
-        const data = await response.json();
-        setTexts(data);
-      } catch (error) {
-        console.log(error.message);
-      }
-    };
-    fetchData();
-  }, []);
+const Home = (props) => {
+  const { texts, setTexts } = props;
 
   return (
     <>
