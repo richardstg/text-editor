@@ -13,7 +13,6 @@ const socket = socketIOClient(ENDPOINT);
 
 const App = () => {
   const [texts, setTexts] = useState([]);
-  console.log(texts);
 
   useEffect(() => {
     const fetchData = async () => {
@@ -30,8 +29,8 @@ const App = () => {
 
   return (
     <div className="App p-5 container">
-      {/* <Router basename="/~rist19/editor"> */}
-      <Router>
+      <Router basename="/~rist19/editor">
+        {/* <Router> */}
         <Toolbar />
         <Switch>
           <Route

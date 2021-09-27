@@ -58,8 +58,6 @@ const Update = (props) => {
         t.id !== updatedText.id ? t : updatedText
       );
       props.setTexts(updatedTexts);
-      console.log(updatedText.name);
-      // console.log("Text updated!!!!!!!");
     });
   }, []);
 
@@ -98,9 +96,9 @@ const Update = (props) => {
         Update Text
       </button>
       {/* <p>Saves automatically.</p> */}
-      <Link to="/">
+      {/* <Link to="/">
         <span data-testid="back">Back</span>
-      </Link>
+      </Link> */}
       {/* {updated && (
         <div>
           <p data-testid="feedback">Text updated successfully!</p>
