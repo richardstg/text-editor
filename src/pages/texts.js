@@ -1,9 +1,8 @@
-import React, { useState, useEffect } from "react";
-import AddText from "../components/addtext/addtext";
+import React from "react";
 import TextList from "../components/textlist/textlist";
 
 const Texts = (props) => {
-  const { texts } = props;
+  const { texts, textsError } = props;
 
   return (
     <>
@@ -11,6 +10,7 @@ const Texts = (props) => {
         Texts
       </h3>
       {texts && texts.length > 0 && <TextList texts={texts} />}
+      {textsError && <p className="text-danger mt-1 mb-1">{textsError}</p>}
     </>
   );
 };

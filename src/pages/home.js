@@ -1,9 +1,9 @@
-import React, { useContext } from "react";
+import React from "react";
 import AddText from "../components/addtext/addtext";
 import TextList from "../components/textlist/textlist";
 
 const Home = (props) => {
-  const { texts, setTexts } = props;
+  const { texts, setTexts, textsError } = props;
 
   return (
     <>
@@ -12,6 +12,7 @@ const Home = (props) => {
       </h3>
       <AddText setTexts={setTexts} />
       {texts && texts.length > 0 && <TextList texts={texts} />}
+      {textsError && <p className="text-danger mt-1 mb-1">{textsError}</p>}
     </>
   );
 };

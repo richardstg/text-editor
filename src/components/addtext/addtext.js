@@ -1,27 +1,33 @@
-import React, { useState } from "react";
+import React, { useState, useContext } from "react";
 import { CKEditor } from "@ckeditor/ckeditor5-react";
 import ClassicEditor from "@ckeditor/ckeditor5-build-classic";
+import { AuthContext } from "../../context/authcontext";
 
 const AddText = (props) => {
+  const [error, setError] = useState(null);
   const [name, setName] = useState("");
   const [content, setContent] = useState("");
-
   const { setTexts } = props;
+  const context = useContext(AuthContext);
 
   const saveHandler = async (event) => {
     event.preventDefault();
-
+    setError(null);
     try {
       const response = await fetch(`${process.env.REACT_APP_BACKEND_URL}`, {
         method: "POST",
         headers: {
           Accept: "application/json",
           "Content-Type": "application/json",
+          Authorization: "Bearer " + context.token,
         },
         body: JSON.stringify({ name, content }),
       });
       const data = await response.json();
 
+      if (!response.ok) {
+        throw new Error(data.message);
+      }
       setTexts((state) => {
         if (state.length > 0) {
           return [data, ...state];
@@ -31,7 +37,7 @@ const AddText = (props) => {
       setName("");
       setContent("");
     } catch (err) {
-      console.log(err.message);
+      setError(err.message);
     }
   };
 
@@ -61,6 +67,7 @@ const AddText = (props) => {
       >
         Add Text
       </button>
+      {error && <p className="text-danger mt-1 mb-1">{error}</p>}
     </>
   );
 };
