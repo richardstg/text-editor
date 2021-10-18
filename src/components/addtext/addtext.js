@@ -167,10 +167,10 @@ const AddText = (props) => {
       </button>
       <div>
         {codeMode && output && (
-          <p className="mt-1 mb-3">
-            OUTPUT: <br />
-            {output}
-          </p>
+          <>
+            <h6>Output</h6>
+            <p className="mb-3">{output}</p>
+          </>
         )}
       </div>
       {loading && (
