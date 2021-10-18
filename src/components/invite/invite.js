@@ -1,29 +1,35 @@
 import React, { useState, useContext } from "react";
-import { useForm } from "react-hook-form";
 import { AuthContext } from "../../context/authcontext";
+import { useForm } from "react-hook-form";
 
-const Login = (props) => {
+const Invite = (props) => {
+  // const [email, setEmail] = useState("");
   const [error, setError] = useState(null);
+  const [inviteSuccess, setInviteSuccess] = useState(false);
   const context = useContext(AuthContext);
   const {
     register,
     handleSubmit,
+    reset,
     formState: { errors },
   } = useForm();
 
-  const onSubmit = async (formData) => {
+  const inviteHandler = async (formData) => {
+    setError(null);
+    setInviteSuccess(false);
     try {
       const response = await fetch(
-        `${process.env.REACT_APP_BACKEND_URL}/auth/login`,
+        `${process.env.REACT_APP_BACKEND_URL}/invite`,
         {
           method: "POST",
           headers: {
             Accept: "application/json",
             "Content-Type": "application/json",
+            Authorization: "Bearer " + context.token,
           },
           body: JSON.stringify({
+            textId: props.textId,
             email: formData.email,
-            password: formData.password,
           }),
         }
       );
@@ -32,18 +38,20 @@ const Login = (props) => {
       if (!response.ok) {
         throw new Error(data.message);
       }
-      context.login(data.userId, data.userEmail, data.token);
+      setInviteSuccess(true);
+      reset({ email: "" });
     } catch (err) {
       setError(err.message);
     }
   };
 
   return (
-    <>
-      <h3 className="mt-3 mb-3">Login</h3>
-      <form onSubmit={handleSubmit(onSubmit)}>
-        <label>Email</label>
+    <div className="card p-4 bg-light mt-3">
+      <h6>Invite a friend to edit the text</h6>
+      <form onSubmit={handleSubmit(inviteHandler)}>
+        {/* <label>Email</label> */}
         <input
+          placeholder="Enter the email address..."
           type="email"
           className="form-control"
           {...register("email", {
@@ -56,29 +64,12 @@ const Login = (props) => {
           required
         />
         <p className="text-danger">{errors.email?.message}</p>
-        <label>Password</label>
-        <input
-          type="password"
-          className="form-control"
-          {...register("password", {
-            required: "Password is required",
-            // minLength: {
-            //   value: 7,
-            //   message: "Password need to have at least 7 characters",
-            // },
-          })}
-          required
-        />
-        <p className="text-danger">{errors.password?.message}</p>
-        <input
-          type="submit"
-          className="btn btn-primary mt-1 mb-1"
-          value="Submit"
-        />
+        <input type="submit" className="btn btn-secondary" value="Submit" />
       </form>
-      {error && <p className="text-danger mt-1 mb-1">{error}</p>}
-    </>
+      {error && <p className="text-danger">{error}</p>}
+      {inviteSuccess && <p className="text-success mt-2">Invite was sent!</p>}
+    </div>
   );
 };
 
-export default Login;
+export default Invite;

@@ -32,7 +32,7 @@ const SignUp = (props) => {
       if (!response.ok) {
         throw new Error(data.message);
       }
-      context.login(data.userId, data.token);
+      context.login(data.userId, data.userEmail, data.token);
     } catch (err) {
       setError(err.message);
     }

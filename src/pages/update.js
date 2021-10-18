@@ -1,15 +1,20 @@
 import React, { useState, useEffect, useContext } from "react";
-import { Link } from "react-router-dom";
 import { CKEditor } from "@ckeditor/ckeditor5-react";
 import ClassicEditor from "@ckeditor/ckeditor5-build-classic";
 import { AuthContext } from "../context/authcontext";
+import Comment from "../components/comment/comment";
+import Invite from "../components/invite/invite";
+import CodeMirror from "@uiw/react-codemirror";
+import { javascript } from "@codemirror/lang-javascript";
 
 const Update = (props) => {
+  const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
   const [id, setId] = useState(props.text.id);
   const [name, setName] = useState(props.text.name);
   const [content, setContent] = useState(props.text.content);
   const [updated, setUpdated] = useState(false);
+  const [output, setOutput] = useState("");
   const context = useContext(AuthContext);
 
   const saveHandler = async (event) => {
@@ -18,6 +23,8 @@ const Update = (props) => {
     }
     setUpdated(false);
     setError(null);
+    setLoading(true);
+    setOutput("");
     try {
       const response = await fetch(
         `${process.env.REACT_APP_BACKEND_URL}/${id}`,
@@ -28,7 +35,11 @@ const Update = (props) => {
             "Content-Type": "application/json",
             Authorization: "Bearer " + context.token,
           },
-          body: JSON.stringify({ name, content }),
+          body: JSON.stringify({
+            name,
+            content,
+            code: props.text.code || false,
+          }),
         }
       );
       const data = await response.json();
@@ -38,8 +49,16 @@ const Update = (props) => {
       }
 
       setUpdated(true);
+      setLoading(false);
 
-      const editedText = { id, name, content, creator: props.text.creator };
+      const editedText = {
+        id,
+        name,
+        content,
+        creator: props.text.creator,
+        authorized: props.text.authorized,
+        code: props.text.code || false,
+      };
       const texts = props.texts.map((t) =>
         t.id !== editedText.id ? t : editedText
       );
@@ -47,13 +66,40 @@ const Update = (props) => {
       // props.socket.emit("text update", editedText);
     } catch (err) {
       setError(err.message);
+      setLoading(false);
     }
   };
 
-  // Save the text every time name or content is changed
-  // useEffect(() => {
-  //   saveHandler();
-  // }, [name, content]);
+  const executeCodeHandler = async () => {
+    setError(null);
+    setOutput("");
+    setLoading(true);
+    setUpdated(false);
+
+    try {
+      const response = await fetch("https://execjs.emilfolino.se/code", {
+        body: JSON.stringify({
+          code: btoa(content),
+        }),
+        headers: {
+          "content-type": "application/json",
+        },
+        method: "POST",
+      });
+      const result = await response.json();
+
+      if (!response.ok) {
+        throw new Error(result.message);
+      }
+      let decodedOutput = atob(result.data);
+
+      setOutput(decodedOutput);
+      setLoading(false);
+    } catch (err) {
+      setError(err.message);
+      setLoading(false);
+    }
+  };
 
   /* Listen for text updates from other clients and set the updated
   text to the state */
@@ -71,7 +117,8 @@ const Update = (props) => {
   useEffect(() => {
     setName(props.text.name);
     setContent(props.text.content);
-  }, [props.text.name, props.text.content]);
+    setId(props.text.id);
+  }, [props.text.name, props.text.content, props.text.id]);
 
   return (
     <>
@@ -81,42 +128,83 @@ const Update = (props) => {
         value={name}
         className="mt-3 mb-3 w-100 p-2"
       />
-      {content && (
-        <CKEditor
-          editor={ClassicEditor}
-          data={content}
-          onReady={(editor) => {}}
-          onChange={(event, editor) => {
-            setContent(editor.getData());
-          }}
-        />
-      )}
+      {content &&
+        (props.text.code ? (
+          <CodeMirror
+            value={content}
+            height="200px"
+            extensions={[javascript({ jsx: true })]}
+            onChange={(value, viewUpdate) => {
+              setContent(value);
+            }}
+          />
+        ) : (
+          <CKEditor
+            editor={ClassicEditor}
+            data={content}
+            onReady={(editor) => {}}
+            onChange={(event, editor) => {
+              setContent(editor.getData());
+            }}
+          />
+        ))}
       <button
         className="btn btn-success mt-3 mb-3"
         type="submit"
         onClick={saveHandler}
         name="Update Text"
         data-testid="update-button"
-        disabled={context.userId !== props.text.creator}
+        disabled={
+          !(
+            context.userId === props.text.creator ||
+            props.text.authorized.includes(context.userEmail)
+          )
+        }
       >
-        Update Text
+        Update
       </button>
-      {context.userId !== props.text.creator && (
-        <p className="mt-1">
-          You cannot update this text since you did not create it.
-        </p>
+      {props.text.code && (
+        <button
+          className="btn btn-outline-success mb-3 d-block"
+          type="submit"
+          onClick={executeCodeHandler}
+          name="Run"
+          data-testid="run-button"
+        >
+          Run
+        </button>
       )}
-      {error && <p className="text-danger mt-1 mb-1">{error}</p>}
+      {loading && (
+        <div class="lds-ring">
+          <div></div>
+          <div></div>
+          <div></div>
+          <div></div>
+        </div>
+      )}
+      {props.text.code && output && (
+        <>
+          <h6>Output</h6>
+          <p className="mb-3">{output}</p>
+        </>
+      )}
+      {!(
+        context.userId === props.text.creator ||
+        props.text.authorized.includes(context.userEmail)
+      ) && <p className="mt-1">You are not authorized to make updates.</p>}
+      {error && <p className="text-danger mt-1 mb-3">{error}</p>}
       {updated && (
         <p className="text-success" data-testid="feedback">
-          Text updated successfully!
+          Updated successfully!
         </p>
       )}
-      <Link to="/">
-        <p className="mt-0 mb-1" data-testid="back">
-          Back
-        </p>
-      </Link>
+      {(context.userId === props.text.creator ||
+        props.text.authorized.includes(context.userEmail)) && (
+        <>
+          <Comment textId={props.text.id} />
+          <Invite textId={id} />
+        </>
+      )}
     </>
   );
 };

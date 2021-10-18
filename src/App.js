@@ -5,7 +5,7 @@ import {
   Switch,
   Redirect,
 } from "react-router-dom";
-import socketIOClient from "socket.io-client";
+// import socketIOClient from "socket.io-client";
 
 import Toolbar from "./components/toolbar/toolbar";
 import Home from "./pages/home";
@@ -13,15 +13,17 @@ import Update from "./pages/update";
 import About from "./pages/about";
 import Texts from "./pages/texts";
 import Auth from "./pages/auth";
+import Invite from "./pages/invite";
 
 import { AuthContext } from "./context/authcontext";
 import { useAuth } from "./hooks/authhook";
 
-const ENDPOINT = process.env.REACT_APP_BACKEND_URL;
-const socket = socketIOClient(ENDPOINT);
+/* Socket */
+// const ENDPOINT = process.env.REACT_APP_BACKEND_URL;
+// const socket = socketIOClient(ENDPOINT);
 
 const App = () => {
-  const { token, login, logout, userId } = useAuth();
+  const { token, login, logout, userId, userEmail } = useAuth();
   const [texts, setTexts] = useState([]);
   const [textsError, setTextsError] = useState(null);
 
@@ -55,7 +57,12 @@ const App = () => {
         exact
         path="/"
         render={(props) => (
-          <Home texts={texts} textsError={textsError} setTexts={setTexts} />
+          <Home
+            texts={texts}
+            textsError={textsError}
+            setTextsError={setTextsError}
+            setTexts={setTexts}
+          />
         )}
       />
       <Route path="/about" exact component={About} />
@@ -64,6 +71,7 @@ const App = () => {
         path="/texts"
         render={(props) => <Texts texts={texts} textsError={textsError} />}
       />
+      {/* <Route exact path="/users" render={(props) => <Users />} /> */}
       {texts && texts.length > 0 && (
         <Route
           path="/:id"
@@ -75,34 +83,37 @@ const App = () => {
               }
               texts={texts}
               setTexts={setTexts}
-              socket={socket}
+              // socket={socket}
             />
           )}
         />
       )}
+      <Redirect to="/" />
     </Switch>
   );
 
   const unauthorizedRoutes = (
     <Switch>
       <Route path="/" exact component={Auth} />
+      <Route path="/invite" render={(props) => <Invite />} />
       <Redirect to="/" />
     </Switch>
   );
 
   return (
-    <div className="App p-5 container">
+    <div className="App container pb-5">
       <AuthContext.Provider
         value={{
           isLoggedIn: !!token,
           token: token,
           userId: userId,
+          userEmail: userEmail,
           login: login,
           logout: logout,
         }}
       >
-        {/* <Router basename="/~rist19/editor"> */}
-        <Router>
+        <Router basename="/~rist19/editor">
+          {/* <Router> */}
           <Toolbar />
           {token ? authorizedRoutes : unauthorizedRoutes}
         </Router>

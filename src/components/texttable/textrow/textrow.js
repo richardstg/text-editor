@@ -2,9 +2,10 @@ import React, { useContext } from "react";
 import { Link } from "react-router-dom";
 import { AuthContext } from "../../../context/authcontext";
 
-const TextItem = (props) => {
+const TextRow = (props) => {
   const { text } = props;
   const context = useContext(AuthContext);
+  console.log(text);
 
   const authorized =
     context.userId === props.text.creator ||
@@ -12,15 +13,14 @@ const TextItem = (props) => {
       props.text.authorized.includes(context.userEmail));
 
   return (
-    <li key={text.id}>
-      <Link to={`/${text.id}`}>{text.name}</Link>
-      <span className="font-italic">
-        {" "}
-        ({authorized ? "authorized" : "unauthorized"} to edit, type:{" "}
-        {text.code ? "code" : "text"})
-      </span>
-    </li>
+    <tr>
+      <td>
+        <Link to={`/${text.id}`}>{text.name}</Link>
+      </td>
+      <td>{authorized ? "Authorized" : "Unauthorized"}</td>
+      <td> {text.code ? "Code" : "Text"}</td>
+    </tr>
   );
 };
 
-export default TextItem;
+export default TextRow;

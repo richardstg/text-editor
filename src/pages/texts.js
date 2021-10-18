@@ -1,5 +1,5 @@
 import React from "react";
-import TextList from "../components/textlist/textlist";
+import TextTable from "../components/texttable/texttable";
 
 const Texts = (props) => {
   const { texts, textsError } = props;
@@ -9,7 +9,7 @@ const Texts = (props) => {
       <h3 className="mt-3" data-testid="home">
         Texts
       </h3>
-      {texts && texts.length > 0 && <TextList texts={texts} />}
+      {texts && texts.length > 0 && <TextTable texts={texts} />}
       {textsError && <p className="text-danger mt-1 mb-1">{textsError}</p>}
     </>
   );
