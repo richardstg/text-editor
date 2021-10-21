@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import {
-  BrowserRouter as Router,
+  HashRouter as Router,
   Route,
   Switch,
   Redirect,
@@ -112,8 +112,8 @@ const App = () => {
           logout: logout,
         }}
       >
-        <Router basename="/~rist19/editor">
-          {/* <Router> */}
+        {/* <Router basename="/~rist19/editor"> */}
+        <Router>
           <Toolbar />
           {token ? authorizedRoutes : unauthorizedRoutes}
         </Router>

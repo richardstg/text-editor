@@ -12,7 +12,6 @@ const Invite = (props) => {
     formState: { errors },
   } = useForm();
   const search = useLocation().search;
-  // const textId = new URLSearchParams(search).get("text");
   const email = new URLSearchParams(search).get("email");
 
   const onSubmit = async (formData) => {

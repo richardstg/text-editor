@@ -2,7 +2,7 @@
   "name": "jsramverk-editor",
   "version": "10.0.5",
   "private": true,
-  "homepage": ".",
+  "homepage": "./",
   "dependencies": {
     "@ckeditor/ckeditor5-build-classic": "^29.2.0",
     "@ckeditor/ckeditor5-react": "^3.0.2",
